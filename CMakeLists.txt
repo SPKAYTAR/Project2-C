@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 4.2)
-project(Blank_Project)
+project(Digital_Library)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(Blank_Project main.cpp)
+add_executable(Digital_Library main.cpp
+        exceptions/LibraryManagerExceptions.h
+        exceptions/LibraryManagerExceptions.cpp)
