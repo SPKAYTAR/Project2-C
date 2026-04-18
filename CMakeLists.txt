@@ -8,6 +8,8 @@ add_executable(Digital_Library main.cpp
         LibraryManager.cpp
         Book.cpp
         Magazine.cpp
+        AudioBook.cpp
+        EBook.cpp
         exceptions/LibraryManagerExceptions.h
         exceptions/LibraryManagerExceptions.cpp)
         
