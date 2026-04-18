@@ -1,3 +1,7 @@
+#CMake
+build/
+out/
+
 ### IntelliJ IDEA ###
 .idea/
 .idea/modules.xml
@@ -32,6 +36,7 @@ bin/
 
 ### VS Code ###
 .vscode/
+.vs/
 
 ### Mac OS ###
 .DS_Store

@@ -1,18 +1,59 @@
 #include <iostream>
-
-// TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+#include "LibraryManager.h"
+#include "LibraryException.h"
+#include "Borrowable.h"
+#include "Book.h"
+#include "AudioBook.h"
+#include "Magazine.h"
+#include "EBook.h"
 
 int main() {
-    // TIP Press <shortcut actionId="RenameElement"/> when your caret is at the <b>lang</b> variable name to see how CLion can help you rename it.
+    LibraryManager manager;
 
-    const auto lang = "C++";
-    std::cout << "Hello and welcome to " << lang << "!\n";
+    try {
+        // Create multiple concrete media objects and store polymorphically.
+        manager.addItem(new Book("B001", "1984", "George Orwell", 1949, "Dystopian"));
+        manager.addItem(new AudioBook("A001", "Dune", "Frank Herbert", 1965, "Scott Brick"));
+        manager.addItem(new Magazine("M001", "National Geographic", "Various", 2026, "April 2026"));
+        manager.addItem(new EBook("E001", "Clean Code", "Robert C. Martin", 2008, "PDF"));
 
-    for (int i = 1; i <= 5; i++) {
-        // TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-        std::cout << "i = " << i << std::endl;
+        std::cout << "=== Initial Collection ===" << std::endl;
+        manager.displayAll(); // Runtime polymorphism via virtual displayInfo()
+
+        std::cout << "\n=== Borrow Through Manager ===" << std::endl;
+        manager.borrowItem("B001");
+        manager.displayAll();
+
+        std::cout << "\n=== Polymorphic Access (findItem + virtual call) ===" << std::endl;
+        LibraryItem* item = manager.findItem("A001");
+        item->displayInfo();
+
+        std::cout << "\n=== Interface In Action (Borrowable*) ===" << std::endl;
+        LibraryItem* magItem = manager.findItem("M001");
+        Borrowable* borrowable = dynamic_cast<Borrowable*>(magItem);
+        if (borrowable != nullptr) {
+            borrowable->borrowItem();
+            std::cout << "Magazine borrowed? " << (borrowable->isBorrowed() ? "Yes" : "No") << std::endl;
+            borrowable->returnItem();
+        }
+
+        std::cout << "\n=== Exception Demo #1 ===" << std::endl;
+        try {
+            manager.borrowItem("X404"); // Not found
+        } catch (const LibraryException& ex) {
+            std::cout << "Caught exception: " << ex.what() << std::endl;
+        }
+
+        std::cout << "\n=== Exception Demo #2 ===" << std::endl;
+        try {
+            manager.returnItem("E001"); // E001 was never borrowed
+        } catch (const LibraryException& ex) {
+            std::cout << "Caught exception: " << ex.what() << std::endl;
+        }
+    } catch (const std::exception& ex) {
+        std::cout << "Unexpected error: " << ex.what() << std::endl;
+        return 1;
     }
 
     return 0;
-    // TIP See CLion help at <a href="https://www.jetbrains.com/help/clion/">jetbrains.com/help/clion/</a>. Also, you can try interactive lessons for CLion by selecting 'Help | Learn IDE Features' from the main menu.
 }
